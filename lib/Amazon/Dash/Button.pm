@@ -26,17 +26,17 @@ Here is a non exhaustive list of ideas, applications you think:
 
 =over 4
 
-=item - control your music player (provide an example for mpd: Music Player Daemon)
+=item control your music player (provide an example for mpd: Music Player Daemon)
 
-=item - silent doorbell which send a notification (text, email, ...)
+=item silent doorbell which send a notification (text, email, ...)
 
-=item - order your favorite pizza
+=item order your favorite pizza
 
-=item - switch on/off the light
+=item switch on/off the light
 
-=item - open the garage door
+=item open the garage door
 
-=item - ...
+=item ...
 
 =back
 
