@@ -150,8 +150,7 @@ Same as for search you can add a filter to listen.
 			dev     => q{eth0},
 			filter  => q{'udp and ( port 67 or port 68 )},
 			timeout => 5, # ignore any further clicks in the next 5 seconds
-		 )
-			->listen();
+		 )->listen();
 
 
 =head1 Basic installation process
