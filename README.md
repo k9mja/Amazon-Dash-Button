@@ -1,4 +1,6 @@
-Simple-Accessor
-===============
+Amazon::Dash::Button
+=====================
 
-a light and simple way to provide accessor in perl
+a very simple perl interface to play & interact with an Amazon Dash Button.
+
+read more from [metacpan perldoc](https://metacpan.org/pod/Amazon::Dash::Button)

@@ -23,12 +23,22 @@ Amazon::Dash::Button allow you to discover your mac address button and
 set a listener to run any custom action when the button is clicked...
 
 Here is a non exhaustive list of ideas, applications you think:
-- control your music player (provide an example for mpd: Music Player Daemon)
-- silent doorbell which send a notification (text, email, ...)
-- order your favorite pizza
-- switch on/off the light
-- open the garage door
-- ...
+
+=over 4
+
+=item - control your music player (provide an example for mpd: Music Player Daemon)
+
+=item - silent doorbell which send a notification (text, email, ...)
+
+=item - order your favorite pizza
+
+=item - switch on/off the light
+
+=item - open the garage door
+
+=item - ...
+
+=back
 
 This can be used on a Raspberry Pi, linux, mac os x computer...
 In order to properly listen to packets you would need to run it as root using 'sudo' 
@@ -390,7 +400,7 @@ sub add {
 
 =head1 CONTRIBUTE
 
-You can contribute to this project on github https://github.com/atoomic/Amazon-Dash-Button
+You can contribute to this project on github L<https://github.com/atoomic/Amazon-Dash-Button>
 
 =cut
 
