@@ -3,7 +3,7 @@ Amazon::Dash::Button - a very simple perl interface to play & interact with an A
 
 # VERSION
 
-version 0.10
+version 0.11
 
 # DESCRIPTION
 

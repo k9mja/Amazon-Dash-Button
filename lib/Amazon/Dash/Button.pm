@@ -13,10 +13,6 @@ use warnings;
 =head1 NAME
 Amazon::Dash::Button - a very simple perl interface to play & interact with an Amazon Dash Button.
 
-=head1 VERSION
-
-version 0.10
-
 =head1 DESCRIPTION
 
 Amazon::Dash::Button allows you to discover your mac address button and

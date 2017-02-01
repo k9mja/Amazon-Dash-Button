@@ -8,11 +8,8 @@ use Simple::Accessor qw{mac onClick name timeout last_click _fork_for_onClick};
 # ABSTRACT: a very simple perl interface to play & interact with an Amazon Dash Button.
 
 =head1 NAME
+
 Amazon::Dash::Button::Device - the button class itself
-
-=head1 VERSION
-
-version 0.10
 
 =head1 DESCRIPTION
 
