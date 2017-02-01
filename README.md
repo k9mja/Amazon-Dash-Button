@@ -7,19 +7,21 @@ version 0.10
 
 # DESCRIPTION
 
-Amazon::Dash::Button allow you to discover your mac address button and
-set a listener to run any custom action when the button is clicked...
+Amazon::Dash::Button allows you to discover your mac address button and
+set a listener to run any custom actions when the button is clicked...
 
-Here is a non exhaustive list of ideas, applications you think:
+Here is a non exhaustive list of ideas, applications you can think about:
 
-- - control your music player (provide an example for mpd: Music Player Daemon)
-- - silent doorbell which send a notification (text, email, ...)
-- - order your favorite pizza
-- - switch on/off the light
-- - open the garage door
-- - ...
+- control your music player (provide an example for mpd: Music Player Daemon)
+- silent doorbell which send a notification (text, email, ...)
+- order your favorite pizza
+- switch on/off the light
+- open the garage door
+- ...
 
-This can be used on a Raspberry Pi, linux, mac os x computer...
+Feel free to complete this list, and submit more ideas.
+
+This can be used on a Raspberry Pi, linux, mac os computer...
 In order to properly listen to packets you would need to run it as root using 'sudo' 
 
 # Setting
@@ -28,11 +30,12 @@ In order to properly listen to packets you would need to run it as root using 's
 
 The first thing to do once you have received your button is to set it and discover it.
 Here is the basic setting process:
-\- use your phone or table to perform the basic setting, but do not complete it, stop when asking to select to link a product with the button.
-\- in the mobile app you would find a menu "Your Dash Button" -> "Settings" then "Set up a new device".
-\- choose your dash device, then follow the instructions: long press on the button until it discovery mode (blue light)
-\- provide the wifi password of your network
-\- but do not select the exact product linked to your button exit from there
+
+- use your phone or table to perform the basic setting, but do not complete it, stop when asking to select to link a product with the button.
+- in the mobile app you would find a menu "Your Dash Button" -> "Settings" then "Set up a new device".
+- choose your dash device, then follow the instructions: long press on the button until it discovery mode (blue light)
+- provide the wifi password of your network
+- but do not select the exact product linked to your button exit from there !
 
 ## Detecting the button
 
