@@ -5,6 +5,21 @@ use warnings;
 
 use Simple::Accessor qw{mac onClick name timeout last_click _fork_for_onClick};
 
+# ABSTRACT: a very simple perl interface to play & interact with an Amazon Dash Button.
+
+=head1 NAME
+Amazon::Dash::Button::Device - the button class itself
+
+=head1 VERSION
+
+version 0.10
+
+=head1 DESCRIPTION
+
+Amazon::Dash::Button::Device should be used by Amazon::Dash::Button.
+
+=cut
+
 sub _build_name { ( $_[0]->mac() // '' ) . ' (unknown name)' }
 sub _build_last_click        { 0 }
 sub _build_timeout           { 5 }
