@@ -53,7 +53,7 @@ sub go_to_bed {
     mpc('clear');
 
     #mpc('add', 'NAS/QNap/random' );
-    mpc( 'add', 'NAS/QNap/00-NETGEAR/Musique Classique' );
+    mpc( 'add', 'NAS/QNap/Musique Classique' );
     mpc('shuffle');
     volume( $decrease[0]->[0] );    # set the volume at the beginning
     tlog("start play...");
@@ -83,7 +83,8 @@ sub start {
 
     mpc('stop');
     mpc('clear');
-    mpc( 'add', 'NAS/QNap/random' );
+    #mpc( 'add', 'NAS/QNap/random' );
+    mpc( 'add', 'NAS/QNap/Compilations' );
     mpc('shuffle');
     volume(65);
     mpc('play');
