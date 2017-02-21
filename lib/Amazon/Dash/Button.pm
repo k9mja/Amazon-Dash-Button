@@ -302,11 +302,12 @@ sub search {
             #return if $udp->{src_port} < 67 or $udp->{src_port} > 69;
 
             my $key = "udp:" . $ether->{src_mac};
-            return if $use_cache && $cache{$key};
+            my $pretty_mac = _pretty_mac( $ether->{src_mac} );
+
+            return if $use_cache && $cache{$key} && $pretty_mac !~ qr{Amazon};
             $cache{$key} = 1;
 
-            print "UDP - from $ip->{src_ip}:$udp->{src_port} [ Mac Address = "
-              . _pretty_mac( $ether->{src_mac} ) . " ]\n";
+            print "UDP - from $ip->{src_ip}:$udp->{src_port} [ Mac Address = $pretty_mac ]\n";
 
             return;
 
@@ -315,12 +316,12 @@ sub search {
             my ( $npe, $ether, $arp, $header ) = @_;
 
             my $key = "arp:" . $ether->{src_mac};
+            my $pretty_mac = _pretty_mac( $ether->{src_mac} );
 
-            return if $use_cache && $cache{$key};
+            return if $use_cache && $cache{$key} && $pretty_mac !~ qr{Amazon};
             $cache{$key} = 1;
 
-            print "ARP - Mac Address = "
-              . _pretty_mac( $ether->{src_mac} ) . "\n";
+            print "ARP - Mac Address = $pretty_mac\n";
 
             return;
         },
