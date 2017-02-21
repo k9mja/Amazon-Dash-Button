@@ -35,7 +35,7 @@ Amazon::Dash::Button->new( dev => $device, )->add(
     mac     => '34:d2:70:9f:bf:04',
     onClick => sub {
         my $self = shift;
-        print "clicked ! from the ".$self->name." button\n";
+        print "clicked ! from the KY button\n";
         $CURRENT_HOST = q{127.0.0.1};
         start_stop();
     },
@@ -45,7 +45,7 @@ Amazon::Dash::Button->new( dev => $device, )->add(
     mac     => '68:54:fd:b5:2d:a0',
     onClick => sub {
         my $self = shift;
-        print "clicked ! from the ".$self->name." button\n";
+        print "clicked ! from the Trojan button\n";
         my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
         $CURRENT_HOST = q{127.0.0.1};
         if ( $hour > 6 && $hour <= 20 ) {
@@ -60,7 +60,7 @@ Amazon::Dash::Button->new( dev => $device, )->add(
     onClick => sub {
         my $self = shift;
         $CURRENT_HOST = q{salon.pi.eboxr.com};
-        print "clicked ! from the ".$self->name." button\n";
+        print "clicked ! from the Kitchen button\n";
         clean_and_next_song();
     },
 )->listen;
