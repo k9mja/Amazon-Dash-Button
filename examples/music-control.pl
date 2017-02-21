@@ -37,7 +37,7 @@ Amazon::Dash::Button->new( dev => $device, )->add(
         my $self = shift;
         print "clicked ! from the KY button\n";
         $CURRENT_HOST = q{127.0.0.1};
-        start_stop();
+        start_stop_bedroom();
     },
     _fork_for_onClick => 0,    # fast enough do not need to fork there
   )->add(
@@ -49,7 +49,7 @@ Amazon::Dash::Button->new( dev => $device, )->add(
         my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
         $CURRENT_HOST = q{127.0.0.1};
         if ( $hour > 6 && $hour <= 20 ) {
-            clean_and_next_song();
+            start_or_clean_and_next_song();
         } else {
             go_to_bed();    
         }
@@ -61,24 +61,27 @@ Amazon::Dash::Button->new( dev => $device, )->add(
         my $self = shift;
         $CURRENT_HOST = q{salon.pi.eboxr.com};
         print "clicked ! from the Kitchen button\n";
-        clean_and_next_song();
+        start_or_clean_and_next_song();
     },
 )->listen;
 
-sub clean_and_next_song {
+sub start_or_clean_and_next_song {
     # start the music if nothing is playing it
     my $host = which_host_is_playing();
     if ( !$host ) {
         my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+        my %opts = ( dir => 'NAS/QNap/random', volume => 35 );
         if ( $wday == 0 || $wday == 6 ) {
             # during the weekend use mezza
             $CURRENT_HOST = q{mezza.pi.eboxr.com};
+            delete $opts{volume}; # do not move the volume on snapcast
         }
         # music is not playing let's start it using the default CURRENT_HOST
-        return start( 'NAS/QNap/random' );
+        
+        return start( %opts );
     }
-    $CURRENT_HOST = $host;
-
+    $CURRENT_HOST = $host; # not a big deal this is done in a forked process
+    # # mpc -h salon.pi.eboxr.com --format \"[%file%]\"
     my @out = split "\n", mpc( '--format', q{"[%file%]"} ) // '';
     my $listening_file = $out[0];
     mpc( 'next' ); # play the next song
@@ -99,6 +102,8 @@ sub _move_song_to_trash {
     }
 
     print qx{ssh -t sab\@sab.eboxr.com 'echo "Moving file..."; echo "$f" >> /multimedia/tmp/Music/trash.log; mv "$f" /multimedia/tmp/Music/'};
+    # do the md5sum only if it s in random directory
+    # if not found check the files... (with same size ?) then md5
     return;
 }
 
@@ -140,23 +145,30 @@ sub go_to_bed {
     return;
 }
 
-sub start_stop {
-
+sub start_stop_bedroom {    
+    # if localhost is playing stop it
     return mpc('stop') if is_mpc_playing();
-    start();
+
+    # if the multiroom is playing do nothing
+    my $host = which_host_is_playing();
+    return if $host && $host eq 'mezza.pi.eboxr.com';
+
+    # else then just start some music for the bathroom
+    start( dir => 'NAS/QNap/Compilations', volume => 65 );
 
     return;
 }
 
 sub start {
-    my $folder = shift;
-    $folder //= 'NAS/QNap/Compilations';
+    my ( %opts ) = @_;
+    
+    my $folder = $opts{dir} // 'NAS/QNap/random';
 
     mpc( 'stop' );
     mpc( 'clear' );
     mpc( 'add', $folder );
     mpc( 'shuffle' );
-    volume(65);
+    volume($opts{volume}) if defined $opts{volume} && $opts{volume} =~ qr{^[0-9]$};
     mpc( 'play' );
 
     return;
@@ -177,8 +189,6 @@ sub which_host_is_playing {
     }
     return;
 }
-
-# mpc -h salon.pi.eboxr.com --format \"[%file%]\"
 
 sub mpc {
     my @args = @_;
