@@ -127,7 +127,7 @@ sub go_to_bed {
     mpc('clear');
 
     #mpc('add', 'NAS/QNap/random' );
-    mpc( 'add', 'NAS/QNap/Musique Classique' );
+    mpc( 'add', 'NAS/QNap/Musique\ Classique' );
     mpc('shuffle');
     volume( $decrease[0]->[0] );    # set the volume at the beginning
     tlog("start play...");
@@ -193,7 +193,7 @@ sub which_host_is_playing {
 sub mpc {
     my @args = @_;
 
-    if ( length $CURRENT_HOST && ! grep { $_ eq '-h' } @args ) {
+    if ( length $CURRENT_HOST && $CURRENT_HOST ne '127.0.0.1' && ! grep { $_ eq '-h' } @args ) {
         unshift @args, '-h', $CURRENT_HOST;
     }
 
