@@ -11,8 +11,8 @@ use Amazon::Dash::Button ();
 use constant MPC => q{/usr/bin/mpc};
 
 die
-  "You should run this script as root. Please run:\nsudo $0 [en0|eth0|wlan0]\n"
-  if $>;
+    "You should run this script as root. Please run:\nsudo $0 [en0|eth0|wlan0]\n"
+    if $>;
 
 my $device = $ARGV[0] || q{wlan0};
 
@@ -40,52 +40,104 @@ Amazon::Dash::Button->new( dev => $device, )->add(
         start_stop_bedroom();
     },
     _fork_for_onClick => 0,    # fast enough do not need to fork there
-  )->add(
+    )->add(
     name    => 'Trojan',
     mac     => '68:54:fd:b5:2d:a0',
     onClick => sub {
         my $self = shift;
         print "clicked ! from the Trojan button\n";
-        my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+        my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst )
+            = localtime(time);
         $CURRENT_HOST = q{127.0.0.1};
+
+        # do not care about other hosts here: only bedroom + mezza
+        @all_hosts = qw{
+            127.0.0.1
+            mezza.pi.eboxr.com
+        };
         if ( $hour > 6 && $hour <= 20 ) {
             start_or_clean_and_next_song();
-        } else {
-            go_to_bed();    
+        }
+        else {
+            go_to_bed();
         }
     },
-  )->add(
+    )->add(
     name    => 'ON Kitchen',
     mac     => '50:f5:da:2a:62:4f',
+    onClick => \&living_room_and_office,
+    )->add(
+    name    => 'Nico macMini - milk',
+    mac     => '44:65:0d:c8:9b:2b',
+    onClick => \&living_room_and_office,
+    )->add(
+    name    => 'Game Room',
+    mac     => '50:f5:da:2a:00:00',
     onClick => sub {
         my $self = shift;
-        $CURRENT_HOST = q{salon.pi.eboxr.com};
+        $CURRENT_HOST = q{mezza.pi.eboxr.com};
+
+        # do not care about bedroom
+        @all_hosts = qw{
+            salon.pi.eboxr.com
+            mezza.pi.eboxr.com
+            game.pi.eboxr.com
+        };
         print "clicked ! from the Kitchen button\n";
-        start_or_clean_and_next_song();
-    },
-)->listen;
+
+        # improve... if salon is playing -> stop salon, then start mezza
+        start_or_clean_and_next_song( from => 'gameroom' );
+    }
+    )->listen;
+
+sub living_room_and_office {
+    my $self = shift;
+    $CURRENT_HOST = q{salon.pi.eboxr.com};
+
+    # do not care about the bedroom from living room
+    @all_hosts = qw{
+        salon.pi.eboxr.com
+        mezza.pi.eboxr.com
+    };
+
+    print "clicked ! from the Kitchen button\n";
+    return start_or_clean_and_next_song();
+}
 
 sub start_or_clean_and_next_song {
+    my (%opts) = @_;
+
     # start the music if nothing is playing it
     my $host = which_host_is_playing();
+    if ( $opts{from} && $opts{from} eq 'gameroom' ) {
+        if ( $host && $host eq 'salon.pi.eboxr.com' ) {
+
+            #local $CURRENT_HOST = $host;
+            mpc( '-h', $host, 'stop' );
+            undef $host;    # let's now start the CURRENT_HOST which is mezza
+        }
+    }
     if ( !$host ) {
-        my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
-        my %opts = ( dir => 'NAS/QNap/random', volume => 35 );
+        my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst )
+            = localtime(time);
+        my %start_with = ( dir => 'NAS/QNap/random', volume => 35 );
         if ( $wday == 0 || $wday == 6 ) {
+
             # during the weekend use mezza
             $CURRENT_HOST = q{mezza.pi.eboxr.com};
-            delete $opts{volume}; # do not move the volume on snapcast
+            delete $start_with{volume};   # do not move the volume on snapcast
         }
+
         # music is not playing let's start it using the default CURRENT_HOST
-        
-        return start( %opts );
+
+        return start(%start_with);
     }
     $CURRENT_HOST = $host; # not a big deal this is done in a forked process
-    # # mpc -h salon.pi.eboxr.com --format \"[%file%]\"
+                           # # mpc -h salon.pi.eboxr.com --format \"[%file%]\"
     my @out = split "\n", mpc( '--format', q{"[%file%]"} ) // '';
     my $listening_file = $out[0];
-    mpc( 'next' ); # play the next song
-    # now we can move the previous song to another folder
+    mpc('next');    # play the next song
+                    # now we can move the previous song to another folder
     _move_song_to_trash($listening_file);
 
     return;
@@ -101,7 +153,9 @@ sub _move_song_to_trash {
         next;
     }
 
-    print qx{ssh -t sab\@sab.eboxr.com 'echo "Moving file..."; echo "$f" >> /multimedia/tmp/Music/trash.log; mv "$f" /multimedia/tmp/Music/'};
+    print
+        qx{ssh -t sab\@sab.eboxr.com 'echo "Moving file..."; echo "$f" >> /multimedia/tmp/Music/trash.log; mv "$f" /multimedia/tmp/Music/'};
+
     # do the md5sum only if it s in random directory
     # if not found check the files... (with same size ?) then md5
     return;
@@ -145,7 +199,8 @@ sub go_to_bed {
     return;
 }
 
-sub start_stop_bedroom {    
+sub start_stop_bedroom {
+
     # if localhost is playing stop it
     return mpc('stop') if is_mpc_playing();
 
@@ -160,16 +215,17 @@ sub start_stop_bedroom {
 }
 
 sub start {
-    my ( %opts ) = @_;
-    
+    my (%opts) = @_;
+
     my $folder = $opts{dir} // 'NAS/QNap/random';
 
-    mpc( 'stop' );
-    mpc( 'clear' );
+    mpc('stop');
+    mpc('clear');
     mpc( 'add', $folder );
-    mpc( 'shuffle' );
-    volume($opts{volume}) if defined $opts{volume} && $opts{volume} =~ qr{^[0-9]$};
-    mpc( 'play' );
+    mpc('shuffle');
+    volume( $opts{volume} )
+        if defined $opts{volume} && $opts{volume} =~ qr{^[0-9]$};
+    mpc('play');
 
     return;
 }
@@ -184,7 +240,7 @@ sub is_mpc_playing {
 }
 
 sub which_host_is_playing {
-    foreach my $h ( @all_hosts ) {
+    foreach my $h (@all_hosts) {
         return $h if is_mpc_playing( '-h', $h );
     }
     return;
@@ -193,7 +249,10 @@ sub which_host_is_playing {
 sub mpc {
     my @args = @_;
 
-    if ( length $CURRENT_HOST && $CURRENT_HOST ne '127.0.0.1' && ! grep { $_ eq '-h' } @args ) {
+    if (   length $CURRENT_HOST
+        && $CURRENT_HOST ne '127.0.0.1'
+        && !grep { $_ eq '-h' } @args )
+    {
         unshift @args, '-h', $CURRENT_HOST;
     }
 
