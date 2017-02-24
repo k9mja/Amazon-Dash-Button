@@ -71,6 +71,10 @@ Amazon::Dash::Button->new( dev => $device, )->add(
     mac     => '44:65:0d:c8:9b:2b',
     onClick => \&living_room_and_office,
     )->add(
+    name    => 'Living Room: window - purash',
+    mac     => 'ac:63:be:8c:4a:86',
+    onClick => \&living_room_and_office,
+    )->add(
     name    => 'Game Room',
     mac     => '50:f5:da:2a:00:00',
     onClick => sub {
@@ -83,7 +87,6 @@ Amazon::Dash::Button->new( dev => $device, )->add(
             mezza.pi.eboxr.com
             game.pi.eboxr.com
         };
-        print "clicked ! from the Kitchen button\n";
 
         # improve... if salon is playing -> stop salon, then start mezza
         start_or_clean_and_next_song( from => 'gameroom' );
@@ -109,6 +112,8 @@ sub start_or_clean_and_next_song {
 
     # start the music if nothing is playing it
     my $host = which_host_is_playing();
+    # when pressed from the gameroom, stop music in the living room if playing there
+    #   then start it from mezza
     if ( $opts{from} && $opts{from} eq 'gameroom' ) {
         if ( $host && $host eq 'salon.pi.eboxr.com' ) {
 
