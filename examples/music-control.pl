@@ -71,6 +71,10 @@ Amazon::Dash::Button->new( dev => $device, )->add(
     mac     => '44:65:0d:c8:9b:2b',
     onClick => \&living_room_and_office,
     )->add(
+    name    => 'Phanie macMini - vichy',
+    mac     => 'ac:63:be:82:03:47',
+    onClick => \&living_room_and_office,
+    )->add(
     name    => 'Living Room: window - purash',
     mac     => 'ac:63:be:8c:4a:86',
     onClick => \&living_room_and_office,
