@@ -137,9 +137,9 @@ Same as for search you can add a filter to listen.
 
 Here are some basic steps to install it on a Raspberry Pi for example:
 
-        cpanm Amazon::Dash::Button
         apt-get install libpcap0.8
         apt-get install libpcap-dev
+        cpanm Amazon::Dash::Button
 
 The git repo also provides a very basic systemctl service
 
